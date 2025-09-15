@@ -60,7 +60,6 @@ final class CollectionResponseBuffer
         $response = $this->apiAdapter->request($this->request);
 
         $this->buffer = [];
-        $this->current = 0;
         $this->rowCount = $this->apiAdapter->getRowCount();
 
         if (!is_null($response)) {
