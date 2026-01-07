@@ -21,6 +21,16 @@ class RentalUnitsPhotosRequest extends CollectionRequest
         parent::__construct($adapter);
     }
 
+	/**
+	 * Get the photos of a specified rental unit using ID.
+	 *
+	 * @param int $rental_unit_id
+	 */
+	public function files(string $guid): RentalUnitsFilesRequest
+	{
+		return new RentalUnitsFilesRequest($guid, $this->adapter);
+	}
+
     public function getEndpoint(): string
     {
         return 'rentalunits/' . $this->id . '/photos';
