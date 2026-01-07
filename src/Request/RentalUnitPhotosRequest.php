@@ -14,4 +14,14 @@ class RentalUnitPhotosRequest extends CollectionRequest
     use HasSimpleChildTrait;
 
     const ENDPOINT = 'rentalunitphotos';
+
+	/**
+	 * Get the photos of a specified rental unit using ID.
+	 *
+	 * @param int $rental_unit_id
+	 */
+	public function files(string $guid): RentalUnitsFilesRequest
+	{
+		return new RentalUnitsFilesRequest($guid, $this->adapter);
+	}
 }
