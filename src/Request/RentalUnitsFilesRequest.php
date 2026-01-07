@@ -26,6 +26,6 @@ class RentalUnitsFilesRequest extends CollectionRequest
 
 	public function getEndpoint(): string
 	{
-		return 'rentalunitphotos/' . $this->guid . '/file/' . $this->size->value;
+		return 'rentalunitphotos/file/' . $this->guid . $this->size->value;
 	}
 }
