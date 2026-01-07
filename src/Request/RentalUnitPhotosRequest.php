@@ -9,6 +9,8 @@
 
 namespace Organimmo\Rental\Request;
 
+use Organimmo\Rental\Enums\FileSize;
+
 class RentalUnitPhotosRequest extends CollectionRequest
 {
     use HasSimpleChildTrait;
@@ -20,8 +22,8 @@ class RentalUnitPhotosRequest extends CollectionRequest
 	 *
 	 * @param int $rental_unit_id
 	 */
-	public function files(string $guid): RentalUnitsFilesRequest
+	public function files(string $guid, FileSize $size = FileSize::ORIGINAL): RentalUnitsFilesRequest
 	{
-		return new RentalUnitsFilesRequest($guid, $this->adapter);
+		return new RentalUnitsFilesRequest($guid, $size, $this->adapter);
 	}
 }
