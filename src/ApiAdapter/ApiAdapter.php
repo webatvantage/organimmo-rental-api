@@ -15,22 +15,52 @@ use Organimmo\Rental\Response\CollectionResponse;
 
 abstract class ApiAdapter implements ApiAdapterInterface
 {
-    private $rowCount;
+    private ?int $rowCount = null;
+
+    /**
+     * Last response Content-Type header
+     */
+    protected ?string $lastContentType = null;
 
     public function request(?Request $request = null, bool $raw = false)
     {
         $this->rowCount = null;
-        $http_body = $this->requestBody($request->getEndpoint(), $request->getData(), $request->getHeaders());
+        $this->lastContentType = null;
+
+        $http_body = $this->requestBody(
+            $request->getEndpoint(),
+            $request->getData(),
+            $request->getHeaders()
+        );
+
         if ($raw) {
             return $http_body;
-        } else if (is_null($http_body)) {
-            return null;
-        } else {
-            return json_decode($http_body, false);
         }
+
+        if ($http_body === null) {
+            return null;
+        }
+
+        return json_decode($http_body, false);
     }
 
-    protected function setRowCount(?int $count)
+    /**
+     * Fetch raw binary response
+     */
+    public function fetchBinary(Request $request): string
+    {
+        return (string) $this->request($request, true);
+    }
+
+    /**
+     * Return Content-Type of last response
+     */
+    public function getLastContentType(): ?string
+    {
+        return $this->lastContentType;
+    }
+
+    protected function setRowCount(?int $count): void
     {
         $this->rowCount = $count;
     }
@@ -39,4 +69,15 @@ abstract class ApiAdapter implements ApiAdapterInterface
     {
         return $this->rowCount;
     }
+
+    /**
+     * Concrete adapters MUST:
+     *  - perform the HTTP request
+     *  - set $this->lastContentType
+     */
+    abstract public function requestBody(
+        string $endpoint,
+        ?array $params = null,
+        ?array $headers = []
+    ): ?string;
 }

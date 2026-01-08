@@ -12,7 +12,7 @@ namespace Organimmo\Rental\Request;
 use Organimmo\Rental\ApiAdapter\ApiAdapter;
 use Organimmo\Rental\Enums\FileSize;
 
-class RentalUnitsFilesRequest extends CollectionRequest
+class RentalUnitsFilesRequest extends BinaryRequest
 {
 	protected $guid;
 	protected $size;

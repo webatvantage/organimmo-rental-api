@@ -95,6 +95,8 @@ final class HttpApiAdapter extends ApiAdapter
             return null;
         }
 
+        $this->lastContentType = $response->getHeaderLine('Content-Type');
+
         $headers = $response->getHeaders();
         if (!empty($headers['Content-Range']) && preg_match('/^(\d+)\-(\d+)\/(\d+)$/', $headers['Content-Range'][0], $content_range)) {
             $this->setRowCount(intval($content_range[3]));
