@@ -1,5 +1,5 @@
 {
-    "name": "fw4/organimmo-rental-api",
+    "name": "webatvantage/organimmo-rental-api",
     "type": "library",
     "description": "PHP library for implementing the Organimmo rental API",
     "keywords": ["organimmo", "api", "sdk"],
