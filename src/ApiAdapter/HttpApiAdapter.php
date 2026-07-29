@@ -27,7 +27,7 @@ final class HttpApiAdapter extends ApiAdapter
 
     public function __construct(string $customer_id)
     {
-        $version = \PackageVersions\Versions::getVersion('fw4/organimmo-rental-api');
+        $version = \PackageVersions\Versions::getVersion('webatvantage/organimmo-rental-api');
 
         // Retry failed requests
         $stack = HandlerStack::create();
