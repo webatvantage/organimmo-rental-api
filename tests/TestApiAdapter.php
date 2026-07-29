@@ -16,6 +16,9 @@ final class TestApiAdapter extends ApiAdapter
 {
     protected $responseQueue = [];
 
+    /** Endpoint, method and body of the last request, so writes can be asserted */
+    protected $lastRequest = [];
+
     public function setAccessToken(AccessTokenInterface $token): void
     {
         throw new \Exception('TestApiAdapter does not support access tokens');
@@ -31,14 +34,21 @@ final class TestApiAdapter extends ApiAdapter
         $this->responseQueue[] = $body;
     }
 
+    public function getLastRequest(): array
+    {
+        return $this->lastRequest;
+    }
+
     public function queueResponseFromFile(string $filename)
     {
         $response = file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . 'responses' . DIRECTORY_SEPARATOR . $filename);
         $this->queueResponse($response);
     }
 
-    public function requestBody(string $endpoint, ?array $params = null, ?array $headers = null): ?string
+    public function requestBody(string $endpoint, ?array $params = null, ?array $headers = null, string $method = 'GET', ?array $body = null): ?string
     {
+        $this->lastRequest = ['endpoint' => $endpoint, 'method' => $method, 'body' => $body];
+
         if (count($this->responseQueue) === 0) {
             return null;
         }

@@ -30,7 +30,9 @@ abstract class ApiAdapter implements ApiAdapterInterface
         $http_body = $this->requestBody(
             $request->getEndpoint(),
             $request->getData(),
-            $request->getHeaders()
+            $request->getHeaders(),
+            $request->getMethod(),
+            $request->getBody()
         );
 
         if ($raw) {
@@ -78,6 +80,8 @@ abstract class ApiAdapter implements ApiAdapterInterface
     abstract public function requestBody(
         string $endpoint,
         ?array $params = null,
-        ?array $headers = []
+        ?array $headers = [],
+        string $method = 'GET',
+        ?array $body = null
     ): ?string;
 }

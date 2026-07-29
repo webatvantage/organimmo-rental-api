@@ -15,6 +15,7 @@ use GuzzleHttp\HandlerStack;
 use GuzzleRetry\GuzzleRetryMiddleware;
 use Organimmo\Rental\OAuthProvider;
 use Organimmo\Rental\Exception\AuthException;
+use Organimmo\Rental\Exception\RequestException;
 
 final class HttpApiAdapter extends ApiAdapter
 {
@@ -78,19 +79,39 @@ final class HttpApiAdapter extends ApiAdapter
         return $this->accessToken;
     }
 
-    public function requestBody(string $endpoint, ?array $params = null, ?array $headers = null): ?string
+    public function requestBody(string $endpoint, ?array $params = null, ?array $headers = null, string $method = 'GET', ?array $body = null): ?string
     {
         $options = [];
+        $sendOptions = [];
         $url = self::BASE_URL . ltrim($endpoint, '/');
-        if (isset($params)) {
+        if (!empty($params)) {
             $url .= '?' . http_build_query($params);
         }
         if (isset($headers)) {
             $options['headers'] = $headers;
         }
 
-        $request = $this->oAuthProvider->getAuthenticatedRequest('GET', $url, $this->getAccessToken(), $options);
-        $response = $this->getHttpClient()->send($request);
+        if (isset($body)) {
+            $options['headers']['Content-Type'] = 'application/json';
+            $options['body'] = json_encode($body);
+        }
+
+        if ($method !== 'GET') {
+            // Writes are not idempotent: retrying a timed out booking request could
+            // create a second one, so surface the failure instead of retrying.
+            $sendOptions['retry_enabled'] = false;
+            // Keep the API's own error payload readable rather than letting Guzzle
+            // throw on 400/404/409 (see RequestException).
+            $sendOptions['http_errors'] = false;
+        }
+
+        $request = $this->oAuthProvider->getAuthenticatedRequest($method, $url, $this->getAccessToken(), $options);
+        $response = $this->getHttpClient()->send($request, $sendOptions);
+
+        if ($response->getStatusCode() >= 400) {
+            throw RequestException::fromResponse($response, $endpoint);
+        }
+
         if ($response->getStatusCode() === 204) {
             return null;
         }

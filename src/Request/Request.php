@@ -31,6 +31,23 @@ abstract class Request extends RequestObject
         return $this->_headers;
     }
 
+    /**
+     * HTTP method this request is sent with. Reads are the default, see WriteRequest.
+     */
+    public function getMethod(): string
+    {
+        return 'GET';
+    }
+
+    /**
+     * Payload to send as a JSON request body, or null for a request without one.
+     * Distinct from getData(), which is sent as query parameters.
+     */
+    public function getBody(): ?array
+    {
+        return null;
+    }
+
     public function depth(int $depth): Request
     {
         $this->_data['depth'] = $depth;

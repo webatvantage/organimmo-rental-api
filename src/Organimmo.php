@@ -110,6 +110,14 @@ final class Organimmo
     }
 
     /**
+     * Add an online booking request, or look up the status of one.
+     */
+    public function bookingRequests(): Request\BookingRequestsRequest
+    {
+        return new Request\BookingRequestsRequest($this->getApiAdapter());
+    }
+
+    /**
      * Get the buildings that house the rental units defined by the agency.
      */
     public function buildings(): CollectionRequest
